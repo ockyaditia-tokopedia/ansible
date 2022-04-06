@@ -1,0 +1,6 @@
+[localhost]
+127.0.0.1
+
+[infinispan-staging]
+10.21.40.1
+10.21.39.224

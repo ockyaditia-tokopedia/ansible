@@ -1,0 +1,9 @@
+---
+# playbooks file for infinispan
+
+# tsh scp --user=ocky.aditia@tokopedia.com ansible.zip root@10.21.40.1:/root/
+- name: Infinispan
+  hosts: infinispan-staging
+
+  roles:
+    - infinispan

@@ -1,0 +1,13 @@
+---
+# handlers file for infinispan
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: restart infinispan
+  systemd:
+    name: infinispan
+    enabled: yes
+    state: restarted
+  become: yes

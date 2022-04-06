@@ -1,0 +1,55 @@
+---
+# playbooks file for clean-infinispan
+
+# apt-get autoremove openjdk-11-jdk
+# systemctl stop infinispan.service
+# systemctl disable infinispan.service
+# rm /etc/systemd/system/infinispan.service
+# rm -r /var/lib/infinispan-server-13.0.8.Final
+# rm -r /var/lib/infinispan
+# systemctl daemon-reload
+# systemctl reset-failed
+- name: Clean Infinispan
+  hosts: localhost
+  tasks:
+    # - name: Remove openjdk-11-jdk
+    #   apt:
+    #     pkg: openjdk-11-jdk
+    #     state: absent
+    #     autoclean: true
+    #     autoremove: yes
+  
+    # - name: Remove openjdk-11-jdk
+    #   command: apt-get autoremove openjdk-11-jdk
+    #   always_run: true
+
+    - name: Stopped infinispan.service
+      systemd:
+        name: infinispan.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: Disabled infinispan.service
+      command: systemctl disable infinispan.service
+      ignore_errors: yes
+
+    - name: Delete infinispan.service
+      file:
+        state: absent
+        path: /etc/systemd/system/infinispan.service
+
+    - name: Delete infinispan-server-13.0.8.Final Directory
+      file:
+        state: absent
+        path: /var/lib/infinispan-server-13.0.8.Final
+
+    - name: Delete infinispan Link Directory
+      file:
+        state: absent
+        path: /var/lib/infinispan
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Reset systemd
+      command: systemctl reset-failed

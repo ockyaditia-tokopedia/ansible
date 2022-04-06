@@ -1,0 +1,66 @@
+---
+# tasks file for infinispan
+- name: include java.yml
+  include: java.yml
+  tags:
+    - java
+
+- name: Check for existing installation
+  become: yes
+  become_user: root
+  stat:
+    path: '{{ infinispan_install_directory }}'
+  changed_when: false
+  register: infinispan_binary
+
+- when: not infinispan_binary.stat.exists
+  block:
+    - name: Download zip
+      become: yes
+      become_user: root
+      get_url:
+        url: '{{ infinispan_url }}'
+        dest: /tmp/{{ infinispan_zip }}
+        checksum: '{{ infinispan_checksum }}'
+        mode: 0644
+    - name: Unarchive
+      become: yes
+      become_user: root
+      unarchive:
+        remote_src: yes
+        src: /tmp/{{ infinispan_zip }}
+        dest: '{{ infinispan_lib_directory }}'
+        creates: '{{ infinispan_install_directory }}'
+  always:
+    - name: Cleanup
+      become: yes
+      become_user: root
+      file:
+        path: /tmp/{{ infinispan_zip }}
+        state: absent
+
+- name: Link directory
+  become: yes
+  become_user: root
+  file:
+    src: '{{ infinispan_install_directory }}'
+    dest: '{{ infinispan_link_directory }}'
+    state: link
+
+- name: Copy infinispan.xml File
+  template:
+    src: infinispan.xml.j2
+    dest: '{{ infinispan_link_directory }}/{{ infinispan_config_dir }}/infinispan.xml'
+    mode: 0644
+
+- name: Configure systemd
+  template:
+    src: infinispan.service.j2
+    dest: /etc/systemd/system/infinispan.service
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  notify:
+    - reload systemd
+    - restart infinispan

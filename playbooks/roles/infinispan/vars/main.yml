@@ -1,0 +1,11 @@
+---
+# vars file for infinispan
+infinispan_version_final: '{{ infinispan_version }}.Final'
+infinispan_version_name: '{{ infinispan_name }}-{{ infinispan_version }}'
+infinispan_version_server_name: '{{ infinispan_name }}-server-{{ infinispan_version_final }}'
+infinispan_zip: '{{ infinispan_version_server_name }}.zip'
+infinispan_url: '{{ infinispan_download }}/{{ infinispan_version_final }}/{{ infinispan_zip }}'
+infinispan_checksum: '{{ infinispan_checksums[infinispan_version_final] }}'
+infinispan_install_directory: '{{ infinispan_lib_directory }}/{{ infinispan_version_server_name }}'
+infinispan_link_directory: '{{ infinispan_lib_directory }}/{{ infinispan_name }}'
+infinispan_admin_user: admin

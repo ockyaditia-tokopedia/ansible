@@ -1,0 +1,27 @@
+---
+# tasks file for java
+- name: Set fact java_state to present
+  set_fact: java_state="present"
+
+- name: Set fact java_state to latest
+  set_fact: java_state="latest"
+  when: update_java is undefined or update_java == true
+
+- name: Set fact java to openjdk11-jre
+  set_fact: java="openjdk-11-jre"
+
+- name: Install JDK
+  apt: pkg=openjdk-11-jdk state=present force=yes
+  ignore_errors: yes
+
+- name: Check open_jdk version
+  shell: java -version 2>&1 | grep OpenJDK
+  register: open_jdk
+  ignore_errors: yes
+  changed_when: false
+
+- name: Refresh the java ca-certificates
+  become: yes
+  command: /var/lib/dpkg/info/ca-certificates-java.postinst configure
+  when: ansible_distribution == 'Ubuntu' and open_jdk.rc == 0
+  changed_when: false

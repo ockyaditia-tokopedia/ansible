@@ -1,0 +1,16 @@
+[Unit]
+Description=Infinispan Server
+After=syslog.target network.target
+Before=httpd.service
+
+[Service]
+Type=idle
+User={{ infinispan_service_user }}
+Group={{ infinispan_service_group }}
+ExecStartPre={{ infinispan_link_directory }}/bin/cli.sh user create {{ infinispan_admin_user }} -p {{ infinispan_admin_password }}
+ExecStart={{ infinispan_link_directory }}/bin/server.sh
+TimeoutStartSec=600
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
