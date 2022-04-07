@@ -8,10 +8,10 @@
    <jgroups>
       <stack name="cluster-tcp" extends="tcp">
          <TCPPING
-             initial_hosts="10.21.40.1[7800],10.21.39.224[7800]"
+             initial_hosts="{% if group_names|length > 0 %}{{ groups[group_names[0]] | map('extract', hostvars, ['ansible_default_ipv4', 'address']) | join('[7800],') }}[7800]{% endif %}"
              stack.combine="REPLACE"
              stack.position="MPING"
-             />
+             /> <!-- TODO: change initial_hosts into dynamic address -->
       </stack>
    </jgroups>
 
@@ -20,12 +20,45 @@
       <security>
          <authorization/>
       </security>
+      
+{% if infinispan_replicated_cache_name is defined %}
+{% if infinispan_replicated_cache_configuration_enable is defined and infinispan_replicated_cache_configuration_enable is sameas true %}
+      <replicated-cache-configuration name="{{ infinispan_replicated_cache_name }}" mode="SYNC" start="EAGER" statistics="true"/>
+{% endif %}
+{% if infinispan_replicated_cache_realms_enable is defined and infinispan_replicated_cache_realms_enable is sameas true %}
+      <replicated-cache name="realms" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_work_enable is defined and infinispan_replicated_cache_work_enable is sameas true %}
+      <replicated-cache name="work" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_sessions_enable is defined and infinispan_replicated_cache_sessions_enable is sameas true %}
+      <replicated-cache name="sessions" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_authentication_sessions_enable is defined and infinispan_replicated_cache_authentication_sessions_enable is sameas true %}
+      <replicated-cache name="authenticationSessions" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_client_sessions_enable is defined and infinispan_replicated_cache_client_sessions_enable is sameas true %}
+      <replicated-cache name="clientSessions" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_offline_sessions_enable is defined and infinispan_replicated_cache_offline_sessions_enable is sameas true %}
+      <replicated-cache name="offlineSessions" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_offline_client_sessions_enable is defined and infinispan_replicated_cache_offline_client_sessions_enable is sameas true %}
+      <replicated-cache name="offlineClientSessions" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_action_tokens_enable is defined and infinispan_replicated_cache_action_tokens_enable is sameas true %}
+      <replicated-cache name="actionTokens" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% if infinispan_replicated_cache_login_failures_enable is defined and infinispan_replicated_cache_login_failures_enable is sameas true %}
+      <replicated-cache name="loginFailures" configuration="{{ infinispan_replicated_cache_name }}"/>
+{% endif %}
+{% endif %}
    </cache-container>
 
    <server xmlns="urn:infinispan:server:13.0">
       <interfaces>
          <interface name="public">
-            <inet-address value="${infinispan.bind.address:{{ ansible_default_ipv4.address }}}"/>
+            <inet-address value="${infinispan.bind.address:0.0.0.0}"/>
          </interface>
       </interfaces>
 

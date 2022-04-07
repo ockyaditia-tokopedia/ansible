@@ -4,6 +4,18 @@
 # tsh scp --user=ocky.aditia@tokopedia.com ansible.zip root@10.21.40.1:/root/
 - name: Infinispan
   hosts: infinispan-staging
+  vars:
+    infinispan_replicated_cache_name: replicated-keycloak
+    infinispan_replicated_cache_configuration_enable: true
+    infinispan_replicated_cache_realms_enable: true
+    infinispan_replicated_cache_work_enable: true
+    infinispan_replicated_cache_sessions_enable: true
+    infinispan_replicated_cache_authentication_sessions_enable: true
+    infinispan_replicated_cache_client_sessions_enable: true
+    infinispan_replicated_cache_offline_sessions_enable: true
+    infinispan_replicated_cache_offline_client_sessions_enable: true
+    infinispan_replicated_cache_action_tokens_enable: true
+    infinispan_replicated_cache_login_failures_enable: true
 
   roles:
     - infinispan
