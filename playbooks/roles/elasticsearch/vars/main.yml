@@ -1,0 +1,11 @@
+---
+# vars file for elasticsearch
+elasticsearch_version_deb: '{{ elasticsearch_name }}-{{ elasticsearch_version }}-amd64.deb'
+elasticsearch_version_sha: '{{ elasticsearch_version_deb }}.sha512'
+elasticsearch_url: '{{ elasticsearch_download }}/{{ elasticsearch_version_deb }}'
+elasticsearch_sha_url: '{{ elasticsearch_download }}/{{ elasticsearch_version_sha }}'
+
+elasticsearch_version_oss_deb: '{{ elasticsearch_name }}-oss-{{ elasticsearch_version }}-amd64.deb'
+elasticsearch_version_oss_sha: '{{ elasticsearch_version_oss_deb }}.sha512'
+elasticsearch_oss_url: '{{ elasticsearch_download }}/{{ elasticsearch_version_oss_deb }}'
+elasticsearch_oss_sha_url: '{{ elasticsearch_download }}/{{ elasticsearch_version_oss_sha }}'

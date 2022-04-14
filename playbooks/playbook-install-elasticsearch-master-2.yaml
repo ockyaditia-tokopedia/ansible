@@ -1,0 +1,12 @@
+---
+# playbooks file for elasticsearch
+
+- name: Elasticsearch Master
+  hosts: elasticsearch_master_2
+  vars:
+    oss_version: true
+    node_master: true
+    node_data: false
+
+  roles:
+    - elasticsearch

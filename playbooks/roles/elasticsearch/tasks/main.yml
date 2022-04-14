@@ -1,0 +1,69 @@
+---
+# tasks file for elasticsearch
+- name: Check for existing installation
+  become: yes
+  become_user: root
+  stat:
+    path: '{{ elasticsearch_config_dir }}'
+  changed_when: false
+  register: elasticsearch_binary
+
+- when: not elasticsearch_binary.stat.exists
+  block:
+    - name: Download deb pkg
+      become: yes
+      become_user: root
+      get_url:
+        url: '{% if oss_version is sameas true %}{{ elasticsearch_oss_url }}{% else %}{{ elasticsearch_url }}{% endif %}'
+        dest: '{{ elasticsearch_lib_directory }}'
+        mode: 0644
+    - name: Download deb sha
+      become: yes
+      become_user: root
+      get_url:
+        url: '{% if oss_version is sameas true %}{{ elasticsearch_oss_sha_url }}{% else %}{{ elasticsearch_sha_url }}{% endif %}'
+        dest: '{{ elasticsearch_lib_directory }}'
+        mode: 0644
+    - name: Checksum
+      become: yes
+      become_user: root
+      command: shasum -a 512 -c {{ elasticsearch_lib_directory }}/{% if oss_version is sameas true %}{{ elasticsearch_version_oss_sha }}{% else %}{{ elasticsearch_version_sha }}{% endif %}
+      ignore_errors: yes
+    - name: Run dpkg
+      become: yes
+      become_user: root
+      command: dpkg -i {{ elasticsearch_lib_directory }}/{% if oss_version is sameas true %}{{ elasticsearch_version_oss_deb }}{% else %}{{ elasticsearch_version_deb }}{% endif %}
+  always:
+    - name: Cleanup deb pkg
+      become: yes
+      become_user: root
+      file:
+        path: '{{ elasticsearch_lib_directory }}/{% if oss_version is sameas true %}{{ elasticsearch_version_oss_deb }}{% else %}{{ elasticsearch_version_deb }}{% endif %}'
+        state: absent
+    - name: Cleanup deb sha
+      become: yes
+      become_user: root
+      file:
+        path: '{{ elasticsearch_lib_directory }}/{% if oss_version is sameas true %}{{ elasticsearch_version_oss_sha }}{% else %}{{ elasticsearch_version_sha }}{% endif %}'
+        state: absent
+
+- name: Copy elasticsearch.yml File
+  template:
+    src: elasticsearch.yml.j2
+    dest: '{{ elasticsearch_config_dir }}/elasticsearch.yml'
+    mode: 0644
+
+- name: Configure daemon reload
+  become: yes
+  become_user: root
+  command: systemctl daemon-reload
+
+- name: Configure enable systemd
+  become: yes
+  become_user: root
+  command: systemctl enable elasticsearch.service
+
+- name: Configure restart elasticsearch.service
+  become: yes
+  become_user: root
+  command: systemctl restart elasticsearch.service

@@ -1,0 +1,18 @@
+cluster.name: demo-cluster-elasticsearch
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: 0.0.0.0
+http.port: 9200
+cluster.initial_master_nodes:
+- {% if groups['elasticsearch_master_1']|length > 0 %}{{ groups['elasticsearch_master_1'][0] }}{% endif %}
+
+discovery.zen.ping.unicast.hosts: [
+"{% if groups['elasticsearch_master_1']|length > 0 %}{{ groups['elasticsearch_master_1'][0] }}{% endif %}",
+"{% if groups['elasticsearch_master_2']|length > 0 %}{{ groups['elasticsearch_master_2'][0] }}{% endif %}",
+"{% if groups['elasticsearch_data_1']|length > 0 %}{{ groups['elasticsearch_data_1'][0] }}{% endif %}",
+"{% if groups['elasticsearch_data_2']|length > 0 %}{{ groups['elasticsearch_data_2'][0] }}{% endif %}",
+"{% if groups['elasticsearch_data_3']|length > 0 %}{{ groups['elasticsearch_data_3'][0] }}{% endif %}"
+]
+node.name: demo-node-{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+node.master: {{ node_master }}
+node.data: {{ node_data }}

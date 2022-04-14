@@ -1,0 +1,151 @@
+---
+# playbooks file for uninstall-elasticsearch
+
+- name: Clean elasticsearch
+  hosts: elasticsearch_master_1, elasticsearch_master_2, elasticsearch_data_1, elasticsearch_data_2, elasticsearch_data_3
+  tasks:
+    - name: Stopped elasticsearch.service
+      systemd:
+        name: elasticsearch.service
+        state: stopped
+      ignore_errors: yes
+
+    - name: Disabled elasticsearch.service
+      command: systemctl disable elasticsearch.service
+      ignore_errors: yes
+
+    - name: Delete elasticsearch.service
+      file:
+        state: absent
+        path: /usr/lib/systemd/system/elasticsearch.service
+
+    - name: Delete /var/lib/elasticsearch Directory
+      file:
+        state: absent
+        path: /var/lib/elasticsearch
+
+    - name: Delete /var/log/elasticsearch Directory
+      file:
+        state: absent
+        path: /var/log/elasticsearch
+
+    - name: Delete /usr/share/elasticsearch Directory
+      file:
+        state: absent
+        path: /usr/share/elasticsearch
+
+    - name: Delete /var/run/elasticsearch Directory
+      file:
+        state: absent
+        path: /var/run/elasticsearch
+
+    - name: Delete /usr/share/elasticsearch Directory
+      file:
+        state: absent
+        path: /usr/share/elasticsearch
+
+    - name: Delete /usr/share/elasticsearch/bin/elasticsearch Directory
+      file:
+        state: absent
+        path: /usr/share/elasticsearch/bin/elasticsearch
+
+    - name: Delete /etc/elasticsearch Directory
+      file:
+        state: absent
+        path: /etc/elasticsearch
+
+    - name: Delete /etc/init.d/elasticsearch Directory
+      file:
+        state: absent
+        path: /etc/init.d/elasticsearch
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.conffiles Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.conffiles
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.list Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.list
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.md5sums Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.md5sums
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.postinst Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.postinst
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.postrm Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.postrm
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.preinst Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.preinst
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch-oss.prerm Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch-oss.prerm
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.conffiles Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.conffiles
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.list Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.list
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.md5sums Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.md5sums
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.postinst Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.postinst
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.postrm Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.postrm
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.preinst Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.preinst
+
+    - name: Delete /var/lib/dpkg/info/elasticsearch.prerm Directory
+      file:
+        state: absent
+        path: /var/lib/dpkg/info/elasticsearch.prerm
+
+    - name: Delete /etc/default/elasticsearch Directory
+      file:
+        state: absent
+        path: /etc/default/elasticsearch
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Reset systemd
+      command: systemctl reset-failed
+
+    - name: Delete dpkg --purge elasticsearch-oss Directory
+      file:
+        state: absent
+        path: dpkg --purge elasticsearch-oss
+
+    - name: Delete dpkg --purge elasticsearch Directory
+      file:
+        state: absent
+        path: dpkg --purge elasticsearch
