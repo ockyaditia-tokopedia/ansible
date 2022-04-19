@@ -12,6 +12,7 @@
     path: '{{ infinispan_install_directory }}'
   changed_when: false
   register: infinispan_binary
+  tags: setup
 
 - when: not infinispan_binary.stat.exists
   block:
@@ -23,6 +24,7 @@
         dest: /tmp/{{ infinispan_zip }}
         checksum: '{{ infinispan_checksum }}'
         mode: 0644
+      tags: setup
     - name: Unarchive
       become: yes
       become_user: root
@@ -31,6 +33,7 @@
         src: /tmp/{{ infinispan_zip }}
         dest: '{{ infinispan_lib_directory }}'
         creates: '{{ infinispan_install_directory }}'
+      tags: setup
   always:
     - name: Cleanup
       become: yes
@@ -38,6 +41,7 @@
       file:
         path: /tmp/{{ infinispan_zip }}
         state: absent
+      tags: setup
 
 - name: Link directory
   become: yes
@@ -46,12 +50,14 @@
     src: '{{ infinispan_install_directory }}'
     dest: '{{ infinispan_link_directory }}'
     state: link
+  tags: setup
 
 - name: Copy infinispan.xml File
   template:
     src: infinispan.xml.j2
     dest: '{{ infinispan_link_directory }}/{{ infinispan_config_dir }}/infinispan.xml'
     mode: 0644
+  tags: [setup, update]
 
 - name: Configure systemd
   template:
@@ -64,3 +70,4 @@
   notify:
     - reload systemd
     - restart infinispan
+  tags: [setup, update]
